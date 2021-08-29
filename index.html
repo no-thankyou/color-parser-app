@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Парсер текста в цвет</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="">
+    <style>
+        .block {
+            padding: 10px;
+            border: 1px solid black;
+            margin: 5px;
+            display: flex;
+            color: white;
+            font-size: 16pt;
+            text-shadow: black 0 0 2px;
+        }
+        #blocks {
+            display: -webkit-flex;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        #pic {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+Введите текст для парсинга:<br>
+<textarea id="text-for-parse" cols="100" rows="10">
+    Жил осьминог со своей осьминожкой,
+Было у них осьминожков немножко.
+Все они были разного цвета:
+Первый – зеленый, второй – фиолетовый,
+Третий – как зебра весь полосатый,
+Белые оба – четвертый и пятый.
+Шестой – темно-синий от носа до ножек,
+Желтый-прежолтый седьмой осьминожек.
+Восьмой – словно спелая ягода красный…
+Словом не дети, а тюбики с краской.
+</textarea><br>
+<button type="button" id="send">Парсить!</button>
+<div id="pic"></div>
+<div id="blocks"></div>
+<script type="application/javascript">
+    window.onload = function () {
+        document.getElementById('send').onclick = function () {
+            let text = document.getElementById('text-for-parse').value;
+            let xhr = new XMLHttpRequest();
+            let result = document.getElementById('pic');
+            xhr.open('POST', '/parse');
+            xhr.send(JSON.stringify({'text': text}));
+            xhr.onload = function () {
+                let res = JSON.parse(xhr.response);
+                if (xhr.status === 200) {
+                    result.innerHTML = res.pic;
+                    renderBlocks(res.colors);
+                } else {
+                    result.innerHTML = res.error;
+                }
+            };
+
+            xhr.onerror = function () {
+                result.innerHTML = '<p style="color:red;">Ошибка подключения</p>';
+            };
+        };
+
+        function renderBlocks(colors) {
+            let blocks = document.getElementById('blocks');
+            blocks.innerHTML = '';
+            colors.forEach(function (word) {
+                blocks.innerHTML = blocks.innerHTML + '<div class="block" style="background-color: ' + word.color + '">' + word.word + '</div>';
+            });
+        }
+    };
+</script>
+</body>
+</html>
