@@ -1,4 +1,4 @@
-# Приложение осуществляет преобразование текста в цвет
+# Text to color
 
 ![Build Status](https://github.com/no-thankyou/color-parser-app/actions/workflows/github-actions.yml/badge.svg?branch=main)
 
